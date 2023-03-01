@@ -9,7 +9,7 @@ local config = {
   -- Configure AstroNvim updates
   updater = {
     remote = "origin", -- remote to use
-    channel = "stable", -- "stable" or "nightly"
+    channel = "nightly", -- "stable" or "nightly"
     version = "latest", -- "latest", tag name, or regex search like "v1.*" to only do updates before v2 (STABLE ONLY)
     branch = "main", -- branch name (NIGHTLY ONLY)
     commit = nil, -- commit hash (NIGHTLY ONLY)
@@ -26,7 +26,7 @@ local config = {
   },
 
   -- Set colorscheme to use
-  colorscheme = "default_theme",
+  colorscheme = "dark",
 
   -- Add highlight groups in any theme
   highlights = {
@@ -38,7 +38,7 @@ local config = {
     -- },
   },
 
-  -- set vim options here (vim.<first_key>.<second_key> = value)
+  -- set vim options here (vim.<first_key>.<second_key> =  value)
   options = {
     opt = {
       -- set to true or false etc.
@@ -56,8 +56,6 @@ local config = {
       diagnostics_enabled = true, -- enable diagnostics at start
       status_diagnostics_enabled = true, -- enable diagnostics in statusline
       icons_enabled = true, -- disable icons in the UI (disable if no nerd font is available, requires :PackerSync after changing)
-      ui_notifications_enabled = true, -- disable notifications when toggling UI elements
-      heirline_bufferline = false, -- enable new heirline based bufferline (requires :PackerSync after changing)
     },
   },
   -- If you need more control, you can use the function()...end notation
@@ -140,6 +138,7 @@ local config = {
     -- enable servers that you already have installed without mason
     servers = {
       -- "pyright"
+      "omnisharp"
     },
     formatting = {
       -- control auto formatting on save
@@ -220,10 +219,20 @@ local config = {
     init = {
       -- You can disable default plugins as follows:
       -- ["goolord/alpha-nvim"] = { disable = true },
-
+      { "Mofiqul/vscode.nvim",
+      config = function()
+          require("vscode").setup()
+          local c = requiire vscode.colors
+          vim.o.background = 'dark'
+      end
+      }
       -- You can also add new plugins here as well:
       -- Add plugins, the packer syntax without the "use"
       -- { "andweeb/presence.nvim" },
+      {
+          'weilbith/nvim-code-action-menu',
+          cmd = 'CodeActionMenu',
+      }
       -- {
       --   "ray-x/lsp_signature.nvim",
       --   event = "BufRead",
@@ -266,21 +275,15 @@ local config = {
     ["mason-null-ls"] = { -- overrides `require("mason-null-ls").setup(...)`
       -- ensure_installed = { "prettier", "stylua" },
     },
-    ["mason-nvim-dap"] = { -- overrides `require("mason-nvim-dap").setup(...)`
-      -- ensure_installed = { "python" },
-    },
   },
 
   -- LuaSnip Options
   luasnip = {
+    -- Add paths for including more VS Code style snippets in luasnip
+    vscode_snippet_paths = {},
     -- Extend filetypes
     filetype_extend = {
       -- javascript = { "javascriptreact" },
-    },
-    -- Configure luasnip loaders (vscode, lua, and/or snipmate)
-    vscode = {
-      -- Add paths for including more VS Code style snippets in luasnip
-      paths = {},
     },
   },
 
@@ -299,32 +302,6 @@ local config = {
     },
   },
 
-  -- Customize Heirline options
-  heirline = {
-    -- -- Customize different separators between sections
-    -- separators = {
-    --   tab = { "", "" },
-    -- },
-    -- -- Customize colors for each element each element has a `_fg` and a `_bg`
-    -- colors = function(colors)
-    --   colors.git_branch_fg = astronvim.get_hlgroup "Conditional"
-    --   return colors
-    -- end,
-    -- -- Customize attributes of highlighting in Heirline components
-    -- attributes = {
-    --   -- styling choices for each heirline element, check possible attributes with `:h attr-list`
-    --   git_branch = { bold = true }, -- bold the git branch statusline component
-    -- },
-    -- -- Customize if icons should be highlighted
-    -- icon_highlights = {
-    --   breadcrumbs = false, -- LSP symbols in the breadcrumbs
-    --   file_icon = {
-    --     winbar = false, -- Filetype icon in the winbar inactive windows
-    --     statusline = true, -- Filetype icon in the statusline
-    --   },
-    -- },
-  },
-
   -- Modify which-key registration (Use this with mappings table in the above.)
   ["which-key"] = {
     -- Add bindings which show up as group name
@@ -334,9 +311,8 @@ local config = {
         -- second key is the prefix, <leader> prefixes
         ["<leader>"] = {
           -- third key is the key to bring up next level and its displayed
-          -- group name in which-key top level menu
-          ["b"] = { name = "Buffer" },
         },
+        ["<C-.>"] = { "<cmd>CodeActionMenu<cr>", desc = "Pick to jump" },
       },
     },
   },
@@ -357,6 +333,7 @@ local config = {
     --     ["~/%.config/foo/.*"] = "fooscript",
     --   },
     -- }
+    print("hello from user/init.lua")
   end,
 }
 
